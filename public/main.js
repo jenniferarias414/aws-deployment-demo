@@ -52,3 +52,11 @@ function submitHandler(evt) {
             })
         })
 }
+        axios
+            .get('/api/cats')
+            .then(res => {
+                console.log('received!')
+                putTheThingInTheView(res)
+            })
+
+        addForm.addEventListener('submit', submitHandler)

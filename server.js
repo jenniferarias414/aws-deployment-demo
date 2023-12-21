@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 
+app.use(express.json())
 app.use(express.static(`${__dirname}/public`))
 
 // include and initialize the rollbar library with your access token
@@ -14,16 +15,21 @@ var rollbar = new Rollbar({
 // record a generic message and send it to Rollbar
 rollbar.log('Hello world!')
 
-const cats = []
+const cats = ['Wendy', 'Jiggles', 'Xavier']
 
 app.get('/', (req, res) => {
-    try {
-        nonExistentFunction();
-      } catch (error) {
-        console.error(error);
-        // Expected output: ReferenceError: nonExistentFunction is not defined
-        // (Note: the exact output may be browser-dependent)
-      }
+    res.sendFile('./public/index.html')
+//     // try {
+//     //     nonExistentFunction();
+//     //   } catch (error) {
+//     //     console.error(error);
+//     //     // Expected output: ReferenceError: nonExistentFunction is not defined
+//     //     // (Note: the exact output may be browser-dependent)
+//     //   }
+})
+
+app.get('/api/cats', (req, res) => {
+    res.status(200).send(cats)
 })
 
 app.post('/api/cats', (req, res) => {
@@ -49,5 +55,12 @@ app.post('/api/cats', (req, res) => {
         rollbar.error("Bloop: error detected...")
     }
  })
+
+ app.delete('/api/cats/:index', (req, res) => {
+    const targetIndex = +req.params.index
+    rollbar.error("Bloop: error detected...")
+    cats.splice(targetIndex, 1)
+    res.status(200).send(cats)
+})
 
 app.listen(4000, () => console.log('up on 4000'))
